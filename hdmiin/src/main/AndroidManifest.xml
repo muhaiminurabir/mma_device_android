@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="utf-8"?>
+<manifest xmlns:android="http://schemas.android.com/apk/res/android"
+    package="com.geniatech.hdmiin"
+    android:sharedUserId="android.uid.system">
+
+    <uses-permission android:name="android.permission.CAMERA" />
+    <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
+    <uses-permission android:name="android.permission.RECORD_AUDIO" />
+    <uses-permission android:name="android.permission.MODIFY_AUDIO_SETTINGS" />
+
+    <application
+        android:name=".MyApplication">
+        <activity
+            android:name=".MainActivity"
+            android:exported="false">
+            <!--<intent-filter>
+                <action android:name="android.intent.action.MAIN" />
+
+                <category android:name="android.intent.category.LAUNCHER" />
+            </intent-filter>-->
+        </activity>
+
+        <service
+            android:name=".HdmiInPIP"
+            android:exported="true">
+            <intent-filter>
+                <action android:name="com.geniatech.hdmiin.HdmiInPIP" />
+            </intent-filter>
+        </service>
+    </application>
+
+</manifest>

@@ -1,0 +1,89 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    tools:context=".MainActivity">
+
+    <androidx.appcompat.widget.LinearLayoutCompat
+        android:id="@+id/pip_settings_layout"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:gravity="center_vertical"
+        android:orientation="horizontal"
+        tools:ignore="MissingConstraints">
+
+        <CheckBox
+            android:id="@+id/mute_checkbox"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/mute" />
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="20dp"
+            android:text="@string/select_location" />
+
+        <Spinner
+            android:id="@+id/select_location_spinner"
+            android:layout_width="150dp"
+            android:layout_height="40dp"
+            android:entries="@array/location"
+            android:text="@string/mute" />
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="20dp"
+            android:text="@string/choose_size" />
+
+        <Spinner
+            android:id="@+id/choose_size_spinner"
+            android:layout_width="100dp"
+            android:layout_height="40dp"
+            android:entries="@array/size"
+            android:text="@string/mute" />
+
+        <Button
+            android:id="@+id/pip_button"
+            android:layout_width="200dp"
+            android:layout_height="40dp"
+            android:layout_marginStart="20dp"
+            android:text="@string/pip" />
+
+        <Button
+            android:id="@+id/take_picture"
+            android:layout_width="200dp"
+            android:layout_height="40dp"
+            android:layout_marginStart="20dp"
+            android:text="@string/take_picture" />
+
+    </androidx.appcompat.widget.LinearLayoutCompat>
+
+
+    <RelativeLayout
+        android:layout_width="500dp"
+        android:layout_height="300dp">
+
+        <TextureView
+            android:id="@+id/camera_view"
+            android:layout_width="500dp"
+            android:layout_height="300dp" />
+
+        <TextView
+            android:id="@+id/no_signal"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:gravity="center"
+            android:layout_centerInParent="true"
+            android:text="@string/no_signal"
+            android:textColor="@android:color/holo_orange_light"
+            android:textSize="@android:dimen/app_icon_size"
+            android:textStyle="italic"
+            android:visibility="gone" />
+    </RelativeLayout>
+
+
+</LinearLayout>
