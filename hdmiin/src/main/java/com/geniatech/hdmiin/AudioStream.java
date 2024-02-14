@@ -7,11 +7,21 @@ import android.media.AudioManager;
 import android.media.AudioRecord;
 import android.media.AudioTrack;
 import android.media.MediaRecorder;
+import android.os.CountDownTimer;
+import android.os.Environment;
 import android.os.SystemClock;
 import android.os.SystemProperties;
 import android.util.Log;
 
+import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
+import java.io.IOException;
+
 public class AudioStream {
+
+    MediaRecorder mRecorder;
+    String mFileName = null;
     private static final String TAG = "AudioStream";
     private static final String[] strOutDevice = {
             "bypass",                       // bypass to SPK in codec
@@ -78,6 +88,8 @@ public class AudioStream {
         isRecording = true;
         record = new Thread(new recordSound());
         record.start();
+
+        //RecordAudio();
         return true;
     }
 
@@ -180,6 +192,8 @@ public class AudioStream {
                     Log.i(TAG, "out min: " + m_out_buf_size + ", in min: " + m_in_buf_size);
                     m_in_rec = new AudioRecord(MediaRecorder.AudioSource.CAMCORDER, frequence, channelConfig,
                             AudioFormat.ENCODING_PCM_16BIT, m_in_buf_size);
+                    //writeAudioDataToFile(m_in_buf_size,m_in_rec);
+                   // RecordAudio(m_in_rec);
                     m_in_bytes = new byte[m_in_buf_size];
                     m_in_rec.startRecording();//
                     m_out_trk.play();
@@ -233,6 +247,120 @@ public class AudioStream {
                 // TODO: handle exception
             }
         }
+    }
+
+    private void writeAudioDataToFile(int BufferElements2Rec,AudioRecord audioRecord) {
+        // Write the output audio in byte
+
+        String filePath  = Environment.getExternalStorageDirectory()+"/voice8K16bitmono.pcm";
+       // mFileName += "/AudioRecording.3gp";
+        //filePath += "/voice8K16bitmono.pcm";
+        final File file = new File(Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOCUMENTS).toString() + "/misfit.mp3");
+
+        short sData[] = new short[BufferElements2Rec];
+
+        FileOutputStream os = null;
+        try {
+            os = new FileOutputStream(file);
+        } catch (FileNotFoundException e) {
+            e.printStackTrace();
+        }
+
+        while (isRecording) {
+            // gets the voice output from microphone to byte format
+
+            audioRecord.read(sData, 0, BufferElements2Rec);
+            System.out.println("Short wirting to file" + sData.toString());
+            try {
+                // // writes the data to file from buffer
+                // // stores the voice buffer
+                byte bData[] = short2byte(sData);
+                os.write(bData, 0, BufferElements2Rec * 2);
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+        }
+        try {
+            os.close();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+    private byte[] short2byte(short[] sData) {
+        int shortArrsize = sData.length;
+        byte[] bytes = new byte[shortArrsize * 2];
+        for (int i = 0; i < shortArrsize; i++) {
+            bytes[i * 2] = (byte) (sData[i] & 0x00FF);
+            bytes[(i * 2) + 1] = (byte) (sData[i] >> 8);
+            sData[i] = 0;
+        }
+        return bytes;
 
     }
+    public void RecordAudio(AudioRecord audioRecord) {
+        try {
+            if(mRecorder==null){
+                //mRecorder.release();
+                mFileName = Environment.getExternalStorageDirectory().getAbsolutePath();
+                mFileName += "/AudioRecording.3gp";
+
+                // below method is used to initialize
+                // the media recorder class
+                mRecorder = new MediaRecorder();
+
+
+                // below method is used to set the audio
+                // source which we are using a mic.
+                mRecorder.setAudioSource(audioRecord.getAudioSource());
+
+                // below method is used to set
+                // the output format of the audio.
+                mRecorder.setOutputFormat(MediaRecorder.OutputFormat.THREE_GPP);
+
+                // below method is used to set the
+                // audio encoder for our recorded audio.
+                mRecorder.setAudioEncoder(MediaRecorder.AudioEncoder.AMR_NB);
+
+                // below method is used to set the
+                // output file location for our recorded audio
+                mRecorder.setOutputFile(mFileName);
+                try {
+                    // below method will prepare
+                    // our audio recorder class
+                    mRecorder.prepare();
+                } catch (IOException e) {
+                    Log.e("TAG", "prepare() failed");
+                }
+                // start method will start
+                // the audio recording.
+                Log.d("Media recorder", "Recording started");
+
+                mRecorder.start();
+                new CountDownTimer(5000, 1000) {
+
+                    @Override
+                    public void onTick(long l) {
+
+                    }
+
+                    @Override
+                    public void onFinish() {
+                        mRecorder.stop();
+
+                        // below method will release
+                        // the media recorder class.
+                        mRecorder.release();
+                        mRecorder = null;
+                        Log.d("Media recorder", "Finished");
+
+                    }
+                }.start();
+            }else {
+                Log.d("Media recorder", "Not intialize");
+            }
+        } catch (Exception e) {
+            Log.d("Error Line Number", Log.getStackTraceString(e));
+        }
+    }
+
 }
